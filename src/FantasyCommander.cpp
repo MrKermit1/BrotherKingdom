@@ -3,30 +3,33 @@
 #include <string>
 #include "raylib.h"
 #include "globals.h"
-#include "player/ui.h"
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 1000;
+#include "client/ui/ui.h"
+
 
 int main()
 {
     SetTargetFPS(60);
-    UI ui = UI(SCREEN_WIDTH, SCREEN_HEIGHT);
-    Creature c = Creature({ 120.0f, 100.0f }, Creature::WARRIOR, Creature::DWARF);
-    Creature c2 = Creature({ 150.0f, 100.0f }, Creature::WARRIOR, Creature::DWARF);
-
-	world.AddCreature(c);
-	world.AddCreature(c2);
+    ui = UI();
+    Creature c = Creature({ 120.0f, 100.0f }, Creature::WARRIOR);
+    Creature c2 = Creature({ 150.0f, 100.0f }, Creature::WARRIOR);
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
+        
         ClearBackground(DARKGREEN);
         
+        // Update
+        ui.Update();
         world.Update();
+        
+
+        //should be moved to Update in world
         world.Move();
+
+        //Draw
         world.Draw();
-        ui.DrawResources();
-        ui.DrawShop();
+        ui.Draw();
 
         EndDrawing();
     }
