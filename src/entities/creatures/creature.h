@@ -2,38 +2,26 @@
 #include "raylib.h"
 #include <string>
 #include <vector>
-#include "../../world/terrainnode.h"
+#include "../../world/terrain/terrainnode.h"
 
 class Creature
 {
 public:
-	static enum Race
-	{
-		ORC,
-		DWARF
-	};
-
-	static enum Profession
+	enum Profession
 	{
 		WARRIOR,
 		WIZARD,
 		WORKER
 	};
 
-	static enum CreatureType
-	{
-		Player,
-		CPU
-	};
-
-	Creature(Vector2 pos, Creature::Profession proffesion, Creature::Race race);
+	Creature(Vector2 pos, Creature::Profession proffesion);
 	bool IsClicked();
 	bool IsMoving() const;
 	Vector2 GetPosition();
 	TerrainNode* GetTargetNode() const;
 	int GetId();
 	void Draw();
-	void OnClick(Camera2D* camera);
+	void OnClick();
 	void UnClick();
 	void SetPosition(Vector2 pos);
 	void SetNearestTraget(Vector2 pos);
@@ -43,23 +31,20 @@ public:
 	void Animate();
 	void Take();
 	bool IsTaken() const;
-	void SetCreatureType(CreatureType type);
 private:
-	int id;
-	int lifePoints;
-	int currentAnimFrame;
-	int frameDelay;
-	int frameCounter;
-	int animFrames ;
+	uint16_t id;
+	uint8_t lifePoints;
+	uint8_t currentAnimFrame;
+	uint8_t frameDelay;
+	uint8_t frameCounter;
+	int32_t animFrames ;
 	bool taken;
-	unsigned int nextFrameDataOffset;
+	int32_t nextFrameDataOffset;
 	float speed;
 	bool clicked;
 
 	Image imCreatureAnim;
-	Race race;
 	Profession proffesion;
-	CreatureType type;
 	Vector2 position;
 	Vector2 nearestTarget;
 	Texture2D texture;

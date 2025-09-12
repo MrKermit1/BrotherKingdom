@@ -1,17 +1,14 @@
 #include "creature.h"
-#include <iostream>
 #include <queue>
 #include "../../globals.h"
 #include "raymath.h"
 
-Creature::Creature(Vector2 pos, Creature::Profession proffesion, Creature::Race race)
+Creature::Creature(Vector2 pos, Creature::Profession proffesion)
 {
-	id = world.GetCreaturesQuanity();
+	id = (uint16_t)(world.GetCreaturesQuanity());
 	position = pos;
 	this->proffesion = proffesion;
-	this->race = race;
 	this->taken = false;
-	type = CreatureType::Player;
 	clicked = false;
 	AssignRace();
 	AssignProffesion();
@@ -28,6 +25,7 @@ Creature::Creature(Vector2 pos, Creature::Profession proffesion, Creature::Race 
 	//filters
 	SetTextureFilter(texture, TEXTURE_FILTER_POINT);
 	SetTextureWrap(texture, TEXTURE_WRAP_CLAMP);
+	world.AddCreature(*this);
 }
 
 bool Creature::IsClicked()
@@ -36,22 +34,25 @@ bool Creature::IsClicked()
 }
 
 void Creature::Draw()
-{	
+{
 	const float radius = 15.0f;
 	if (clicked)
 	{
-		DrawCircle(position.x + radius, position.y + radius, radius, BLUE);
+		DrawCircle((int)(position.x + radius), (int)(position.y + radius), radius, BLUE);
 	}
 	DrawTextureV(texture, position, WHITE);
 }
 
-void Creature::OnClick(Camera2D* camera)
+void Creature::OnClick()
 {
 	Vector2 nodeSize = { TerrainNode::NODE_SIZE, TerrainNode::NODE_SIZE, };
-	if (IsMouseOnEntity(position, nodeSize))
+	if 
+	(
+		IsMouseOnEntity(position, nodeSize, GetScreenToWorld2D(GetMousePosition(), *(world.GetCamera()))) 
+		&& IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
+	)
 	{
 		clicked = !clicked;
-		std::cout << clicked << "\n";
 	}
 }
 
@@ -86,14 +87,10 @@ void Creature::Animate()
 	if (frameCounter >= frameDelay)
 	{
 		currentAnimFrame++;
-		std::cout << "Frames loaded: " << animFrames << std::endl;
-		std::cout << "Image size: " << imCreatureAnim.width << "x" << imCreatureAnim.height << std::endl;
-		std::cout << "Current frame: " << currentAnimFrame << std::endl;
-		std::cout << "Next frame data offset: " << nextFrameDataOffset << std::endl;
 
 		if (currentAnimFrame >= animFrames) currentAnimFrame = 0;
 
-		nextFrameDataOffset = imCreatureAnim.width * imCreatureAnim.height * 4 * currentAnimFrame;	
+		nextFrameDataOffset = imCreatureAnim.width * imCreatureAnim.height * 4 * currentAnimFrame;
 		UpdateTexture(texture, ((unsigned char*)imCreatureAnim.data) + nextFrameDataOffset);
 
 		frameCounter = 0;
@@ -110,11 +107,6 @@ bool Creature::IsTaken() const
 	return taken;
 }
 
-void Creature::SetCreatureType(CreatureType type)
-{
-	this->type = type;
-}
-
 void Creature::UpdateMovement(float deltaTime)
 {
 	if (world.CheckCreatureOnPosition(position, id))
@@ -126,7 +118,7 @@ void Creature::UpdateMovement(float deltaTime)
 	if (nearestTarget.x == position.x && nearestTarget.y == position.y)
 	{
 		targetNode->SetType(TerrainNode::GRASS);
-		
+
 		nearestTarget = { -1, -1 };
 	}
 
@@ -170,17 +162,9 @@ void Creature::AssignProffesion()
 
 void Creature::AssignRace()
 {
-	switch (race)
-	{
-	case Creature::ORC:
-		racePath = "assets/creatures/orcs/";
-		break;
-	case Creature::DWARF:
-		racePath = "assets/creatures/dwarfs/";
-		break;
-	default:
-		break;
-	}
+
+	racePath = "assets/creatures/dwarfs/";
+
 }
 
 Vector2 Creature::GetPosition()
