@@ -10,6 +10,8 @@ public:
 		SAWMILL,
 	};
 
+	Building(BuildingType type);
+	Building(Vector2 pos);
 	Building(Vector2 pos, BuildingType type);
 
 	bool IsInBuildMode();
@@ -17,11 +19,14 @@ public:
 	void Draw();
 	void Build();
 	void Update();
-private: 
+	void OnClick();
+protected: 
 	bool clicked;
 	bool buildMode;
 
+	static const float BUILDING_SIZE;
 	Vector2 position;
+	Vector2 size;
 	Texture2D texture;
 	BuildingType type;
 	void SwitchTexture();
