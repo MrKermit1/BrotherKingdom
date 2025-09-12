@@ -1,36 +1,15 @@
 #include "world.h"
 #include <random>
-#include <iostream>
 #include "../entities/creatures/creature.h"
-#include "../player/player.h"
 #include <queue>
 #include <map>
+#include "../globals.h"
 
 World::World()
 {
-    map = new TerrainNode* [64];
-    for (int i = 0; i < 64; i++)
-    {
-        map[i] = new TerrainNode[48];
-    }
-
-    camera = { 0 };
-    camera.target = Vector2{ 0.0f, 0.0f };
-    camera.offset = { 0.0f, 0.0f };
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
-
-    GenerateWorld();
-    GenerateTerrain(TerrainNode::STONE ,30);
-    GenerateTerrain(TerrainNode::FOREST ,100);
-}
-
-//  ----------------------------------------------------------------
-
-World::World(Player* player)
-{
 	InitGame();
-    map = new TerrainNode * [64];
+    map = new TerrainNode *[64];
+
     for (int i = 0; i < 64; i++)
     {
         map[i] = new TerrainNode[48];
@@ -45,11 +24,7 @@ World::World(Player* player)
     GenerateWorld();
     GenerateTerrain(TerrainNode::STONE, 30);
     GenerateTerrain(TerrainNode::FOREST, 100);
-
-	this->player = player;
 }
-
-//  ----------------------------------------------------------------
 
 std::vector<Vector2> World::FindPath(Vector2 startPos, Vector2 targetPos)
 {
@@ -60,9 +35,9 @@ std::vector<Vector2> World::FindPath(Vector2 startPos, Vector2 targetPos)
         float priority;
     };
 
-	//Priority queue to store nodes based on their priority(cost + heuristic)
+    //Priority queue to store nodes based on their priority(cost + heuristic)
     auto cmp = [](Node left, Node right) { return left.priority > right.priority; };
-	// Using a priority queue to implement the frontier
+    // Using a priority queue to implement the frontier
     std::priority_queue<Node, std::vector<Node>, decltype(cmp)> frontier(cmp);
 
     std::map<std::pair<int, int>, Vector2> cameFrom;
@@ -133,14 +108,10 @@ std::vector<Vector2> World::FindPath(Vector2 startPos, Vector2 targetPos)
     return path;
 }
 
-//  ----------------------------------------------------------------
-
 Camera2D* World::GetCamera()
 {
     return &camera;
 }
-
-//  ----------------------------------------------------------------
 
 bool World::IsAnyBuildingInBuildMode()
 {
@@ -156,33 +127,29 @@ bool World::IsAnyBuildingInBuildMode()
     return false;
 }
 
-//  ----------------------------------------------------------------
-
 void World::GenerateWorld()
 {
-	for (int i = 0; i < 64; i++)
+	for (uint8_t i = 0; i < 64; i++)
 	{
-		for (int j = 0; j < 48; j++)
+		for (uint8_t j = 0; j < 48; j++)
 		{
 			map[i][j] = TerrainNode(Vector2{i * 25.0f, j * 25.0f}, TerrainNode::GRASS);
 		}
 	}
 }
 
-//  ----------------------------------------------------------------
-
-void World::GenerateTerrain(TerrainNode::TerrainType type, int ammount)
+void World::GenerateTerrain(TerrainNode::TerrainType type, uint8_t ammount)
 {
-    int x = RandomNumber(0, 62);
-    int y = RandomNumber(0,  47);
+    uint16_t x = RandomNumber(0, 62);
+    uint16_t y = RandomNumber(0,  47);
 
-    for (int i = 0; i < ammount; i++)
+    for (uint8_t i = 0; i < ammount; i++)
     {
 
         while (!(CheckTerrain(x, y, TerrainNode::GRASS)))
         {
             x = RandomNumber(0, 62);
-            y = RandomNumber(0, 47);
+            y = RandomNumber(0, 46);
         }
 
         map[x][y].SetType(type);
@@ -192,34 +159,24 @@ void World::GenerateTerrain(TerrainNode::TerrainType type, int ammount)
     }
 }
 
-//  ----------------------------------------------------------------
-
-void World::UnclickUnusedNodes(TerrainNode node)
+void World::UnclickNodes()
 {
-    for (int i = 0; i < 64; i++)
+    for (uint8_t i = 0; i < 64; i++)
     {
-        for (int j = 0; j < 48; j++)
+        for (uint8_t j = 0; j < 48; j++)
         {
-            if (!(map[i][j] == node))
-            {
-                map[i][j].UnClick();
-            }
+            map[i][j].UnClick();
         }
     }
 }
-
-//  ----------------------------------------------------------------
 
 void World::WalkingOnNode(TerrainNode* node, Creature& creature, Vector2 target)
 {
     Vector2 nearest = FindNearestWalkableNode(target);
     if (creature.IsClicked() && node->IsClicked())
     {
-        
-        std::cout << "  TYPE:" << node->GetType() << "\n";
         std::vector<Vector2> path;
 
-        //Vector2 nearest = FindNearestWalkableNode(target);
         path = FindPath(creature.GetPosition(), nearest);
         creature.SetPath(path);
         creature.SetTargetNode(node);
@@ -243,12 +200,12 @@ void World::WalkingOnNode(TerrainNode* node, Creature& creature, Vector2 target)
             switch (creature.GetTargetNode()->GetType())
             {
                 case TerrainNode::FOREST:
-                    player->AddToWood(15);
+                    player.AddToWood(15);
                     creature.Take();
 
                     break;
                 case TerrainNode::STONE:
-                    player->AddToStone(15);
+                    player.AddToStone(15);
                     creature.Take();
 
                     break;
@@ -260,32 +217,22 @@ void World::WalkingOnNode(TerrainNode* node, Creature& creature, Vector2 target)
 
 }
 
-//  ----------------------------------------------------------------
-
 void World::InitGame()
 {
-    const int SCREEN_WIDTH = 1000;
-    const int SCREEN_HEIGHT = 1000;
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fantasy Commander");
 }
-
-//  ----------------------------------------------------------------
 
 void World::AddCreature(Creature creature)
 {
     playerCreatures.push_back(creature);
 }
 
-//  ----------------------------------------------------------------
-
 void World::AddBuilding(Building building)
 {
     playerBuildings.push_back(building);
 }
 
-//  ----------------------------------------------------------------
-
-int World::RandomNumber(int min, int max)
+uint16_t World::RandomNumber(uint16_t min, uint16_t max)
 {
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -294,9 +241,7 @@ int World::RandomNumber(int min, int max)
     return dist6(rng);
 }
 
-//  ----------------------------------------------------------------
-
-bool World::CheckTerrain(int x, int y, TerrainNode::TerrainType type)
+bool World::CheckTerrain(uint16_t x, uint16_t y, TerrainNode::TerrainType type)
 {
     return
         map[x][y].GetType() == type ||
@@ -304,8 +249,6 @@ bool World::CheckTerrain(int x, int y, TerrainNode::TerrainType type)
         map[x][y + 1].GetType() == type ||
         map[x + 1][y + 1].GetType() == type;
 }
-
-//  ----------------------------------------------------------------
 
 bool World::CheckCreatureOnPosition(Vector2 pos)
 {
@@ -320,9 +263,7 @@ bool World::CheckCreatureOnPosition(Vector2 pos)
 	return false;
 }
 
-//  ----------------------------------------------------------------
-
-bool World::CheckCreatureOnPosition(Vector2 pos, int id)
+bool World::CheckCreatureOnPosition(Vector2 pos, uint16_t id)
 {
     for (Creature& c : playerCreatures)
     {
@@ -335,12 +276,10 @@ bool World::CheckCreatureOnPosition(Vector2 pos, int id)
     return false;
 }
 
-//  ----------------------------------------------------------------
-
 Vector2 World::FindNearestWalkableNode(Vector2 startPos)
 {
     Vector2 bestPos = startPos;
-    float bestDistance = FLT_MAX;
+    double bestDistance = FLT_MAX;
 
     for (int dx = -1; dx <= 1; dx++)
     {
@@ -353,8 +292,8 @@ Vector2 World::FindNearestWalkableNode(Vector2 startPos)
             {
                 if (map[newX][newY].GetType() == 0 && !CheckCreatureOnPosition(map[newX][newY].GetPosition()))
                 {
-                    float distance = sqrt(pow(startPos.x - map[newX][newY].GetPosition().x, 2) + 
-                                     pow(startPos.y - map[newX][newY].GetPosition().y, 2));
+                    double distance = sqrt(pow(startPos.x - map[newX][newY].GetPosition().x, 2) + 
+                                      pow(startPos.y - map[newX][newY].GetPosition().y, 2));
 
                     if (distance < bestDistance)
                     {
@@ -369,14 +308,30 @@ Vector2 World::FindNearestWalkableNode(Vector2 startPos)
     return bestPos;
 }
 
-//  ----------------------------------------------------------------
+TerrainNode World::GetTerrainNodeByPosition(Vector2 pos)
+{ 
+    int x = pos.x;
+    int y = pos.y;
 
-int World::GetCreaturesQuanity()
+    int roundedX = RoundUp(x, (int)TerrainNode::NODE_SIZE);
+    int roundedY = RoundUp(y, (int)TerrainNode::NODE_SIZE);
+
+    int arrX = roundedX / 25;
+    int arrY = roundedY / 25;
+
+    if (!(arrX > 63) && !(arrY > 47))
+    {
+        return map[arrX][arrY];
+    }
+
+    std::cout << "returned basic node (not good)\n";
+    return TerrainNode();
+}
+
+size_t World::GetCreaturesQuanity()
 {
     return playerCreatures.size();
 }
-
-//  ----------------------------------------------------------------
 
 void World::Draw()
 {
@@ -402,19 +357,17 @@ void World::Draw()
     EndMode2D();
 }
 
-//  ----------------------------------------------------------------
-
 void World::Update()
 {
     float deltaTime = GetFrameTime();
 
-    for (int i = 0; i < 64; i++)
+    for (uint8_t i = 0; i < 64; i++)
     {
-        for (int j = 0; j < 48; j++)
+        for (uint8_t j = 0; j < 48; j++)
         {
             currentTarget = map[i][j].OnClick(&camera);
 
-            for (Creature& c : playerCreatures)    
+            for (Creature& c : playerCreatures)
             {
                 WalkingOnNode(&map[i][j], c, currentTarget);
             }
@@ -423,7 +376,7 @@ void World::Update()
 
     for (Creature& c : playerCreatures)
     {
-        c.OnClick(&camera);
+        c.OnClick();
         c.UpdateMovement(deltaTime);
         if (c.IsMoving())
         {
@@ -433,11 +386,10 @@ void World::Update()
 
     for (Building& b : playerBuildings)
     {
+        b.OnClick();
 		b.Update();
     }
 }
-
-//  ----------------------------------------------------------------
 
 void World::Move()
 {
