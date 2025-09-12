@@ -18,7 +18,7 @@
     <ClCompile Include="src\FantasyCommander.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\world\terrainnode.cpp">
+    <ClCompile Include="src\world\terrain\terrainnode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\world\world.cpp">
@@ -27,10 +27,10 @@
     <ClCompile Include="src\entities\creatures\creature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\player\player.cpp">
+    <ClCompile Include="src\client\player\player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\player\ui.cpp">
+    <ClCompile Include="src\client\ui\ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\entities\buildings\building.cpp">
@@ -39,9 +39,18 @@
     <ClCompile Include="src\globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\client\ui\components\button\button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entities\buildings\base\base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client\ui\components\component\component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\world\terrainnode.h">
+    <ClInclude Include="src\world\terrain\terrainnode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\world\world.h">
@@ -50,16 +59,25 @@
     <ClInclude Include="src\entities\creatures\creature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\player\player.h">
+    <ClInclude Include="src\client\player\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\player\ui.h">
+    <ClInclude Include="src\client\ui\ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\entities\buildings\building.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\ui\components\button\button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entities\buildings\base\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\ui\components\component\component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

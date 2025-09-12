@@ -23,7 +23,6 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{489a14fb-c0ae-4f01-a2ca-9724a5b1d12e}</ProjectGuid>
     <RootNamespace>FantasyCommander</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -44,6 +43,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <UseStructuredOutput>false</UseStructuredOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <UseStructuredOutput>false</UseStructuredOutput>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -104,6 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,22 +134,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\client\ui\components\component\component.cpp" />
+    <ClCompile Include="src\entities\buildings\base\base.cpp" />
+    <ClCompile Include="src\client\ui\components\button\button.cpp" />
     <ClCompile Include="src\entities\buildings\building.cpp" />
     <ClCompile Include="src\entities\creatures\creature.cpp" />
     <ClCompile Include="src\FantasyCommander.cpp" />
     <ClCompile Include="src\globals.cpp" />
-    <ClCompile Include="src\player\player.cpp" />
-    <ClCompile Include="src\world\terrainnode.cpp" />
-    <ClCompile Include="src\player\ui.cpp" />
+    <ClCompile Include="src\client\player\player.cpp" />
+    <ClCompile Include="src\world\terrain\terrainnode.cpp" />
+    <ClCompile Include="src\client\ui\ui.cpp" />
     <ClCompile Include="src\world\world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\client\ui\components\component\component.h" />
+    <ClInclude Include="src\entities\buildings\base\base.h" />
+    <ClInclude Include="src\client\ui\components\button\button.h" />
     <ClInclude Include="src\entities\buildings\building.h" />
     <ClInclude Include="src\entities\creatures\creature.h" />
     <ClInclude Include="src\globals.h" />
-    <ClInclude Include="src\player\player.h" />
-    <ClInclude Include="src\world\terrainnode.h" />
-    <ClInclude Include="src\player\ui.h" />
+    <ClInclude Include="src\client\player\player.h" />
+    <ClInclude Include="src\world\terrain\terrainnode.h" />
+    <ClInclude Include="src\client\ui\ui.h" />
     <ClInclude Include="src\world\world.h" />
   </ItemGroup>
   <ItemGroup>
