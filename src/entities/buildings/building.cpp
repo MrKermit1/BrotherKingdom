@@ -50,47 +50,7 @@ void Building::Draw()
 
 void Building::Update()
 {
-	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && buildMode)
-	{
-		Vector2 mousePosition = GetScreenToWorld2D(GetMousePosition(), *world.GetCamera());
-
-		uint16_t ceiledX = RoundUp(mousePosition.x, 25);
-		uint16_t ceiledY = RoundUp(mousePosition.y, 25);
-
-		Vector2 ceiledPosition = { ceiledX, ceiledY };
-
-		position = ceiledPosition;
-
-		uint8_t nodesNumber = (size.x / TerrainNode::NODE_SIZE) * (size.y / TerrainNode::NODE_SIZE);
-
-		Vector2 currentPosition = position;
-		bool isNonWalkable = false;
-		for (uint8_t i = 0; i < nodesNumber; i++)
-		{
-			if (currentPosition.x < position.x + size.x)
-			{
-				currentPosition.x += TerrainNode::NODE_SIZE;
-			}
-			else
-			{
-				currentPosition.y += TerrainNode::NODE_SIZE;
-				currentPosition.x = position.x + TerrainNode::NODE_SIZE;
-			}
-
-			std::cout << "it: " << std::to_string(i) << "act pos: " << currentPosition.x << " : " << currentPosition.y << "\n";
-			std::cout << "is walkable: " << world.GetTerrainNodeByPosition(currentPosition).IsWalkable() << "\n";
-
-			if (!world.GetTerrainNodeByPosition(currentPosition).IsWalkable())
-			{
-				isNonWalkable = true;
-			}
-		}
-
-		if (!isNonWalkable)
-		{
-			buildMode = false;
-		}
-	}
+	HandleBuilding();
 
 	if (clicked)
 	{
@@ -128,5 +88,52 @@ void Building::SwitchTexture()
 		break;
 	default:
 		break;
+	}
+}
+
+void Building::HandleBuilding()
+{
+	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && buildMode)
+	{
+		Vector2 mousePosition = GetScreenToWorld2D(GetMousePosition(), *world.GetCamera());
+		mousePosition.x -= texture.width / 2;
+		mousePosition.y -= texture.height / 2;
+
+		uint16_t ceiledX = RoundUp(mousePosition.x, 25);
+		uint16_t ceiledY = RoundUp(mousePosition.y, 25);
+
+		Vector2 ceiledPosition = { ceiledX, ceiledY };
+
+		position = ceiledPosition;
+
+		uint8_t nodesNumber = (size.x / TerrainNode::NODE_SIZE) * (size.y / TerrainNode::NODE_SIZE);
+
+		Vector2 currentPosition = position;
+		bool isNonWalkable = false;
+		for (uint8_t i = 0; i < nodesNumber; i++)
+		{
+			if (currentPosition.x < position.x + size.x)
+			{
+				currentPosition.x += TerrainNode::NODE_SIZE;
+			}
+			else
+			{
+				currentPosition.y += TerrainNode::NODE_SIZE;
+				currentPosition.x = position.x + TerrainNode::NODE_SIZE;
+			}
+
+			//std::cout << "it: " << std::to_string(i) << "act pos: " << currentPosition.x << " : " << currentPosition.y << "\n";
+			//std::cout << "is walkable: " << world.GetTerrainNodeByPosition(currentPosition).IsWalkable() << "\n";
+
+			if (!world.GetTerrainNodeByPosition(currentPosition).IsWalkable())
+			{
+				isNonWalkable = true;
+			}
+		}
+
+		if (!isNonWalkable)
+		{
+			buildMode = false;
+		}
 	}
 }

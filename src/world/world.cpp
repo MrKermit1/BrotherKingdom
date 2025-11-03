@@ -1,5 +1,4 @@
 #include "world.h"
-#include <random>
 #include "../entities/creatures/creature.h"
 #include <queue>
 #include <map>
@@ -16,10 +15,9 @@ World::World()
     }
 
     camera = { 0 };
-    camera.target = Vector2{ 0.0f, 0.0f };
     camera.offset = { 0.0f, 0.0f };
     camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
+    camera.zoom = 1.5f;
 
     GenerateWorld();
     GenerateTerrain(TerrainNode::STONE, 30);
@@ -35,9 +33,8 @@ std::vector<Vector2> World::FindPath(Vector2 startPos, Vector2 targetPos)
         float priority;
     };
 
-    //Priority queue to store nodes based on their priority(cost + heuristic)
     auto cmp = [](Node left, Node right) { return left.priority > right.priority; };
-    // Using a priority queue to implement the frontier
+
     std::priority_queue<Node, std::vector<Node>, decltype(cmp)> frontier(cmp);
 
     std::map<std::pair<int, int>, Vector2> cameFrom;
@@ -113,20 +110,6 @@ Camera2D* World::GetCamera()
     return &camera;
 }
 
-bool World::IsAnyBuildingInBuildMode()
-{
-    for (Building& b : playerBuildings)
-    {
-        std::cout << "status: " << b.IsInBuildMode() << "\n";
-        if (b.IsInBuildMode())
-        {
-            return true;
-        }
-    }
-   
-    return false;
-}
-
 void World::GenerateWorld()
 {
 	for (uint8_t i = 0; i < 64; i++)
@@ -170,49 +153,29 @@ void World::UnclickNodes()
     }
 }
 
-void World::WalkingOnNode(TerrainNode* node, Creature& creature, Vector2 target)
+void World::SetCameraTarget(Vector2 target)
+{
+    camera.target = target;
+}
+
+void World::WalkingOnNode(TerrainNode* node, Creature* creature, Vector2 target)
 {
     Vector2 nearest = FindNearestWalkableNode(target);
-    if (creature.IsClicked() && node->IsClicked())
+    if (creature->IsClicked() && node->IsClicked())
     {
+        
         std::vector<Vector2> path;
 
-        path = FindPath(creature.GetPosition(), nearest);
-        creature.SetPath(path);
-        creature.SetTargetNode(node);
-        creature.SetNearestTraget(nearest);
+        path = FindPath(creature->GetPosition(), nearest);
+        creature->SetPath(path);
+        creature->SetTargetNode(node);
+        creature->SetNearestTraget(nearest);
 
 
         node->UnClick();
 		
-        creature.UnClick();
-        if (creature.GetTargetNode()->GetType() != TerrainNode::GRASS)
-        {
-            creature.Take();
-        }
-
+        creature->UnClick();
         return;
-    }
-    else
-    {
-        if (creature.IsTaken() && !creature.IsMoving())
-        {
-            switch (creature.GetTargetNode()->GetType())
-            {
-                case TerrainNode::FOREST:
-                    player.AddToWood(15);
-                    creature.Take();
-
-                    break;
-                case TerrainNode::STONE:
-                    player.AddToStone(15);
-                    creature.Take();
-
-                    break;
-            default:
-                break;
-            }
-        }
     }
 
 }
@@ -222,23 +185,9 @@ void World::InitGame()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fantasy Commander");
 }
 
-void World::AddCreature(Creature creature)
+void World::AddCreature(Creature* creature)
 {
-    playerCreatures.push_back(creature);
-}
-
-void World::AddBuilding(Building building)
-{
-    playerBuildings.push_back(building);
-}
-
-uint16_t World::RandomNumber(uint16_t min, uint16_t max)
-{
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(min, max);
-
-    return dist6(rng);
+    creatures.push_back(creature);
 }
 
 bool World::CheckTerrain(uint16_t x, uint16_t y, TerrainNode::TerrainType type)
@@ -252,9 +201,9 @@ bool World::CheckTerrain(uint16_t x, uint16_t y, TerrainNode::TerrainType type)
 
 bool World::CheckCreatureOnPosition(Vector2 pos)
 {
-    for (Creature& c : playerCreatures)
+    for (Creature* c : creatures)
     {
-        if (c.GetPosition().x == pos.x && c.GetPosition().y == pos.y)
+        if (c->GetPosition().x == pos.x && c->GetPosition().y == pos.y)
         {
             return true;
 		}
@@ -265,9 +214,9 @@ bool World::CheckCreatureOnPosition(Vector2 pos)
 
 bool World::CheckCreatureOnPosition(Vector2 pos, uint16_t id)
 {
-    for (Creature& c : playerCreatures)
+    for (Creature* c : creatures)
     {
-        if (c.GetPosition().x == pos.x && c.GetPosition().y == pos.y && c.GetId() != id)
+        if (c->GetPosition().x == pos.x && c->GetPosition().y == pos.y && c->GetId() != id)
         {
             return true;
         }
@@ -330,7 +279,7 @@ TerrainNode World::GetTerrainNodeByPosition(Vector2 pos)
 
 size_t World::GetCreaturesQuanity()
 {
-    return playerCreatures.size();
+    return creatures.size();
 }
 
 void World::Draw()
@@ -344,14 +293,17 @@ void World::Draw()
         }
     }
 
-    for (auto& b : playerBuildings)
+    for (Creature* c : creatures)
     {
-        b.Draw();
-    }
-
-    for (auto& c : playerCreatures)
-    {
-        c.Draw();
+        //if (c.IsHero())
+        //{
+        //    ((Hero&)c).Draw();
+        //}
+        //else
+        //{
+        //    c.Draw();
+        //}
+        c->Draw();
     }
 
     EndMode2D();
@@ -367,53 +319,29 @@ void World::Update()
         {
             currentTarget = map[i][j].OnClick(&camera);
 
-            for (Creature& c : playerCreatures)
+            for (Creature* c : creatures)
             {
                 WalkingOnNode(&map[i][j], c, currentTarget);
             }
         }
     }
 
-    for (Creature& c : playerCreatures)
+    for (Creature* c : creatures)
     {
-        c.OnClick();
-        c.UpdateMovement(deltaTime);
-        if (c.IsMoving())
+        c->OnClick();
+        c->UpdateMovement(deltaTime);
+        if (c->IsMoving())
         {
-            c.Animate();
+            c->Animate();
         }
     }
 
-    for (Building& b : playerBuildings)
-    {
-        b.OnClick();
-		b.Update();
-    }
+    int cameraSpeed = 10;
+    camera.zoom += GetMouseWheelMove() * cameraSpeed / 100.0f;
 }
 
 void World::Move()
 {
-    float speed = 10;
-    if (IsKeyDown(KEY_W))
-    {
-        camera.target.y -= speed;
-    }
-
-    if (IsKeyDown(KEY_S))
-    {
-        camera.target.y += speed;
-    }
-
-    if (IsKeyDown(KEY_D))
-    {
-        camera.target.x += speed;
-    }
-
-    if (IsKeyDown(KEY_A))
-    {
-        camera.target.x -= speed;
-    }
-
-    camera.zoom += GetMouseWheelMove() * speed / 100.0f;
+    
 }
     

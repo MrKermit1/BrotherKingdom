@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\FantasyCommander.cpp">
+    <ClCompile Include="src\BrotherKingdom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\world\terrain\terrainnode.cpp">
@@ -48,6 +48,9 @@
     <ClCompile Include="src\client\ui\components\component\component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\creatures\hero\hero.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\world\terrain\terrainnode.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\client\ui\components\component\component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entities\creatures\hero\hero.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

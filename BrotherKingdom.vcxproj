@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{489a14fb-c0ae-4f01-a2ca-9724a5b1d12e}</ProjectGuid>
     <RootNamespace>FantasyCommander</RootNamespace>
+    <ProjectName>BrotherKingdom</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -134,12 +135,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\entities\creatures\hero\hero.cpp" />
     <ClCompile Include="src\client\ui\components\component\component.cpp" />
     <ClCompile Include="src\entities\buildings\base\base.cpp" />
     <ClCompile Include="src\client\ui\components\button\button.cpp" />
     <ClCompile Include="src\entities\buildings\building.cpp" />
     <ClCompile Include="src\entities\creatures\creature.cpp" />
-    <ClCompile Include="src\FantasyCommander.cpp" />
+    <ClCompile Include="src\BrotherKingdom.cpp" />
     <ClCompile Include="src\globals.cpp" />
     <ClCompile Include="src\client\player\player.cpp" />
     <ClCompile Include="src\world\terrain\terrainnode.cpp" />
@@ -147,6 +149,7 @@
     <ClCompile Include="src\world\world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\entities\creatures\hero\hero.h" />
     <ClInclude Include="src\client\ui\components\component\component.h" />
     <ClInclude Include="src\entities\buildings\base\base.h" />
     <ClInclude Include="src\client\ui\components\button\button.h" />

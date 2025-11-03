@@ -14,29 +14,25 @@ public:
 	Vector2 FindNearestWalkableNode(Vector2 startPos);
 	TerrainNode GetTerrainNodeByPosition(Vector2 pos);
 	size_t GetCreaturesQuanity();
-	bool IsAnyBuildingInBuildMode();
 	bool CheckCreatureOnPosition(Vector2 pos);
 	bool CheckCreatureOnPosition(Vector2 pos, uint16_t id);
 	void Draw();
 	void Update();
 	void Move();
-	void AddCreature(Creature creature);
-	void AddBuilding(Building building);
+	void AddCreature(Creature* creature);
 	void GenerateWorld();
 	void GenerateTerrain(TerrainNode::TerrainType type, uint8_t ammount);
 	void UnclickNodes();
+	void SetCameraTarget(Vector2 target);
 private:
-	uint16_t RandomNumber(uint16_t min, uint16_t max);
 	bool CheckTerrain(uint16_t x, uint16_t y, TerrainNode::TerrainType type);
 	
 	TerrainNode** map;
 	Camera2D camera;
 	Vector2 currentTarget;
 	
-	std::vector<Creature> playerCreatures;
-	std::vector<Building> playerBuildings;
-	
-	void WalkingOnNode(TerrainNode *node, Creature& creature, Vector2 target);
+	std::vector<Creature*> creatures;
+	void WalkingOnNode(TerrainNode *node, Creature* creature, Vector2 target);
 	void InitGame();
 };
 

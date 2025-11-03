@@ -7,20 +7,14 @@
 class Creature
 {
 public:
-	enum Profession
-	{
-		WARRIOR,
-		WIZARD,
-		WORKER
-	};
-
-	Creature(Vector2 pos, Creature::Profession proffesion);
+	Creature();
+	Creature(const char* name, uint8_t speed, uint8_t armor, uint8_t attack, uint8_t defence, uint8_t lifePoints, Vector2 pos);
 	bool IsClicked();
 	bool IsMoving() const;
 	Vector2 GetPosition();
 	TerrainNode* GetTargetNode() const;
 	int GetId();
-	void Draw();
+	virtual void Draw();
 	void OnClick();
 	void UnClick();
 	void SetPosition(Vector2 pos);
@@ -31,20 +25,24 @@ public:
 	void Animate();
 	void Take();
 	bool IsTaken() const;
-private:
+protected:
+	const char* name;
 	uint16_t id;
-	uint8_t lifePoints;
 	uint8_t currentAnimFrame;
 	uint8_t frameDelay;
 	uint8_t frameCounter;
 	int32_t animFrames ;
 	bool taken;
 	int32_t nextFrameDataOffset;
-	float speed;
 	bool clicked;
+	bool isHero;
+	uint8_t speed;
+	uint8_t armor;
+	uint8_t attack;
+	uint8_t defence;
+	uint8_t lifePoints;
 
 	Image imCreatureAnim;
-	Profession proffesion;
 	Vector2 position;
 	Vector2 nearestTarget;
 	Texture2D texture;

@@ -3,29 +3,25 @@
 #include "../../globals.h"
 #include "raymath.h"
 
-Creature::Creature(Vector2 pos, Creature::Profession proffesion)
+Creature::Creature()
+{
+}
+
+Creature::Creature(const char* name, uint8_t speed, uint8_t armor, uint8_t attack, uint8_t defence, uint8_t lifePoints, Vector2 position)
 {
 	id = (uint16_t)(world.GetCreaturesQuanity());
-	position = pos;
-	this->proffesion = proffesion;
-	this->taken = false;
-	clicked = false;
-	AssignRace();
-	AssignProffesion();
-	speed = 100.0f;
-	//animation
-	currentAnimFrame = 0;
-	frameDelay = 10;
-	frameCounter = 0;
-	animFrames = 0;
-	nextFrameDataOffset = 0;
-	imCreatureAnim = LoadImageAnim(racePath.c_str(), &animFrames);
-	texture = LoadTextureFromImage(imCreatureAnim);
 
-	//filters
-	SetTextureFilter(texture, TEXTURE_FILTER_POINT);
-	SetTextureWrap(texture, TEXTURE_WRAP_CLAMP);
-	world.AddCreature(*this);
+	this->speed = speed;
+	this->armor = armor;
+	this->attack = attack;
+	this->defence = defence;
+	this->lifePoints = lifePoints;
+	this->position = position;
+	this->name = name;
+	this->taken = false;
+	this->clicked = false;
+
+	world.AddCreature(this);
 }
 
 bool Creature::IsClicked()
@@ -35,11 +31,6 @@ bool Creature::IsClicked()
 
 void Creature::Draw()
 {
-	const float radius = 15.0f;
-	if (clicked)
-	{
-		DrawCircle((int)(position.x + radius), (int)(position.y + radius), radius, BLUE);
-	}
 	DrawTextureV(texture, position, WHITE);
 }
 
@@ -140,31 +131,18 @@ void Creature::UpdateMovement(float deltaTime)
 			position.y += direction.y * speed * deltaTime;
 		}
 	}
+
+	world.SetCameraTarget(Vector2{ position.x - (SCREEN_WIDTH / 4), position.y - (SCREEN_HEIGHT / 4) });
 }
 
 void Creature::AssignProffesion()
 {
-	switch (proffesion)
-	{
-	case Creature::WARRIOR:
-		racePath.append("warrior.gif");
-		break;
-	case Creature::WIZARD:
-		racePath.append("wizard.gif");
-		break;
-	case Creature::WORKER:
-		racePath.append("worker.gif");
-		break;
-	default:
-		break;
-	}
+	racePath.append("warrior.gif");
 }
 
 void Creature::AssignRace()
 {
-
 	racePath = "assets/creatures/dwarfs/";
-
 }
 
 Vector2 Creature::GetPosition()

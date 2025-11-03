@@ -7,24 +7,6 @@ UI::UI()
 {
     menuPosition = { 0, (float)GetScreenHeight() - 100 };
     menuSize = { (float)GetScreenWidth(), 100 };
-
-    const char* text = "Base";
-    Vector2 buttonPosition = { 5, (float)GetScreenHeight() - 90 };
-    Vector2 buttonSize = { 100, 25 };
-
-    Button baseButton = Button(buttonPosition, buttonSize, LIGHTGRAY, text);
-    baseButton.SetOnClickEvent
-    (
-        []()
-        {
-            if (!world.IsAnyBuildingInBuildMode())
-            {
-                world.AddBuilding(Building(Building::BASE));
-            }
-        }
-    );
-
-    buttons.push_back(baseButton);
 }
 
 void UI::DrawResources()

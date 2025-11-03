@@ -30,5 +30,6 @@ protected:
 	Texture2D texture;
 	BuildingType type;
 	void SwitchTexture();
+	void HandleBuilding();
 };
 

@@ -1,10 +1,9 @@
 #include "globals.h"
 #include "raylib.h"
-
+#include <random>
 Player player = Player();
 World world = World();
-UI ui;
-
+UI ui = UI();
 int SCREEN_WIDTH = 1900;
 int SCREEN_HEIGHT = 1000;
 
@@ -21,8 +20,7 @@ bool IsMouseOnEntity(Vector2 entityPosition, Vector2 entitySize, Vector2 mousePo
 {
     return 
     (
-        IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
-        && mousePosition.x >= entityPosition.x
+        mousePosition.x >= entityPosition.x
         && !(mousePosition.x > entityPosition.x + entitySize.x)
         && mousePosition.y >= entityPosition.y
         && !(mousePosition.y > entityPosition.y + entitySize.y)
@@ -44,5 +42,14 @@ int RoundUp(int n, int multiplier)
     }
 
     return n + multiplier - divisionRest;
+}
+
+uint16_t RandomNumber(uint16_t min, uint16_t max)
+{
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(min, max);
+
+    return dist6(rng);
 }
 
